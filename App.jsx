@@ -2,27 +2,32 @@ import React from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import Split from "react-split"
-import { nanoid } from "nanoid"
+import { addDoc, onSnapshot } from "firebase/firestore"
+import { notesApp } from "./firebase"
 
 export default function App() {
-    const [notes, setNotes] = React.useState(
-        () => JSON.parse(localStorage.getItem("notes-app")) || []
-    )
+    const [notes, setNotes] = React.useState([])
     const [currentNoteId, setCurrentNoteId] = React.useState(notes[0]?.id || "")
 
     const currentNote = notes.find(note => note.id === currentNoteId) || notes[0]
 
     React.useEffect(() => {
-        localStorage.setItem("notes-app", JSON.stringify(notes))
-    }, [notes])
+        // onSnapshot returns a clean up function
+        return onSnapshot(notesApp, snapshot => {
+            const notesArr = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }))
+            setNotes(notesArr)
+        })
+    }, [])
 
-    function createNewNote() {
+    async function createNewNote() {
         const newNote = {
-            id: nanoid(),
             body: "# Type your markdown note's title here"
         }
-        setNotes(prevNotes => [newNote, ...prevNotes])
-        setCurrentNoteId(newNote.id)
+        const newDoc = await addDoc(notesApp, newNote)
+        setCurrentNoteId(newDoc.id)
     }
 
     function updateNote(text) {
