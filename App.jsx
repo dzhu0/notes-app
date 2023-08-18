@@ -2,8 +2,8 @@ import React from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import Split from "react-split"
-import { addDoc, onSnapshot } from "firebase/firestore"
-import { notesApp } from "./firebase"
+import { addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
+import { db, notesApp } from "./firebase"
 
 export default function App() {
     const [notes, setNotes] = React.useState([])
@@ -45,13 +45,9 @@ export default function App() {
         })
     }
 
-    function deleteNote(event, noteId) {
-        event.stopPropagation()
-        setNotes(oldNotes => (
-            oldNotes.filter(oldNote => (
-                oldNote.id !== noteId
-            ))
-        ))
+    async function deleteNote(noteId) {
+        const docRef = doc(db, "notes-app", noteId)
+        await deleteDoc(docRef)
     }
 
     return (
