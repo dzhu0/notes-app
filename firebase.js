@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore, collection } from "firebase/firestore"
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyDMtYqUkrSIKQzRFVUSFgs2Cfi0yaSL4GM",
     authDomain: "playground-e3130.firebaseapp.com",
@@ -14,4 +13,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
-const notesCollection = collection(db, "notes")
+export const notesApp = collection(db, "notes-app")
