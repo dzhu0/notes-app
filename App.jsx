@@ -18,6 +18,7 @@ export default function App() {
                 ...doc.data(),
                 id: doc.id
             }))
+            notesArr.sort((a, b) => b.updatedAt - a.updatedAt)
             setNotes(notesArr)
         })
     }, [])
